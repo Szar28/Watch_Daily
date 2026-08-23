@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(Watch_Daily VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Curses REQUIRED)
+
+add_executable(Watch_Daily
+    src/main.cpp
+    src/app.cpp
+)
+
+target_include_directories(Watch_Daily PRIVATE
+    ${CURSES_INCLUDE_DIR}
+)
+
+target_link_libraries(Watch_Daily PRIVATE
+    ${CURSES_LIBRARIES}
+)

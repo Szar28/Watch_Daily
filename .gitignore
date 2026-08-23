@@ -1,0 +1,10 @@
+#Ignored Folders
+CMakeFiles/
+
+#Ignored Files
+MakeFile
+cmake_install.cmake
+CMakeCache.txt
+
+#Ignore All Executable Files
+*.exe
