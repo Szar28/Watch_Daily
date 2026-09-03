@@ -4,14 +4,15 @@
 #include <vector>
 #include <string>
 #include <ncurses.h>
+#include "constants/control_constants.h"
 
 class Application {
 private:
-    std::vector<std::string> choices = {
-        "Create Watch List",
+    std::vector<std::string> choices = {      
         "Add a watch",
         "Remove a watch",
         "Watch Stats",
+        "Create Watch List",
         "Exit"
     };
     int num_choices = choices.size();
