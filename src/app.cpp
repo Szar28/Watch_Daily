@@ -1,10 +1,13 @@
 #include "app.h"
+#include "database.h"
 
 Application::Application() {};
 
-Application:: ~Application() {};
+Application::~Application() {};
 
 void Application::Main_Menu() {
+
+    Database theBase;
 
     initscr();
     noecho();
@@ -12,21 +15,25 @@ void Application::Main_Menu() {
     getmaxyx(stdscr, ymax, xmax);
     box(stdscr, 0, 0);
 
-    WINDOW* menuwin = newwin(num_choices+4, xmax-2, ymax-(num_choices+4),1);
-    box(menuwin, 0, 0);
+    WINDOW* menuWin = newwin(num_choices+4, xmax-2, ymax-(num_choices+4), 1);
+    WINDOW* contentWin = newwin(ymax-(num_choices+4), xmax-2, 1, 1);
+    box(menuWin, 0, 0);
+    box(contentWin, 0, 0);
     refresh();
-    wrefresh(menuwin);
-    keypad(menuwin, true);
+    wrefresh(menuWin);
+    wrefresh(contentWin);
+    keypad(menuWin, true);
 
     while (true) {
+        wrefresh(menuWin);
         for (int i = 0; i < choices.size(); i++) {
             if (i == highlight) {
-                wattron(menuwin, A_REVERSE);
+                wattron(menuWin, A_REVERSE);
             }
-            mvwprintw(menuwin, i + 2, 3, choices[i].c_str());
-            wattroff(menuwin, A_REVERSE);
+            mvwprintw(menuWin, i + 2, 3, choices[i].c_str());
+            wattroff(menuWin, A_REVERSE);
 	    }
-        choice = wgetch(menuwin);
+        choice = wgetch(menuWin);
 
         switch(choice) {
             case KEY_UP:
@@ -50,12 +57,24 @@ void Application::Main_Menu() {
             watches.
         */
         if (choice == CONTROL_CONSTANTS::ENTER_KEY) {
-            break;
+            if (highlight == 0) {
+                theBase.Add_Watch(contentWin);
+            } else if (highlight ==1) {
+                werase(contentWin);
+                box(contentWin, 0, 0);
+                mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());
+                wrefresh(contentWin);
+            }else if (highlight == 4) {
+                
+                werase(contentWin);
+                box(contentWin, 0, 0);
+                mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());
+                wrefresh(contentWin);
+                break;
+            }
         }
     }
 
-    move(2, 3);
-    printw("You chose: %s", choices[highlight].c_str());
     getch();
     endwin();
 };
