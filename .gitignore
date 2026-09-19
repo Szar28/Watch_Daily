@@ -8,6 +8,3 @@ CMakeCache.txt
 
 #Ignore All Executable Files
 *.exe
-
-#Ignore Database Files
-*.db
