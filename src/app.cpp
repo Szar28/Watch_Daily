@@ -52,20 +52,19 @@ void Application::Main_Menu() {
         
         /* TODO:
             Make it so that it will point to other parts of the program.
-            We can start by creating a one that allows us to create the
-            database with SQLite so were able to actually store the
-            watches.
+            Working on deleting a watch from the database.
         */
         if (choice == CONTROL_CONSTANTS::ENTER_KEY) {
             if (highlight == 0) {
-                theBase.Add_Watch(contentWin);
-            } else if (highlight ==1) {
                 werase(contentWin);
                 box(contentWin, 0, 0);
                 mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());
                 wrefresh(contentWin);
-            }else if (highlight == 4) {
-                
+            } else if (highlight == 1) {
+                theBase.Add_Watch(contentWin);
+            } else if (highlight == 2) {
+                theBase.Remove_Watch(contentWin);
+            } else if (highlight == 4) {
                 werase(contentWin);
                 box(contentWin, 0, 0);
                 mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());

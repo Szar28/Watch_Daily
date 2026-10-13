@@ -15,9 +15,9 @@ public:
     Database();
     ~Database();
     void Add_Watch(WINDOW* window);
-    void Remove_Watch();
+    void Remove_Watch(WINDOW* window);
     int Add_To_Database(char name[CHARACTER_LIMIT]);
-    void Remove_Database();
+
 };
 
 #endif
