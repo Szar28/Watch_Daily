@@ -64,6 +64,8 @@ void Application::Main_Menu() {
                 theBase.Add_Watch(contentWin);
             } else if (highlight == 2) {
                 theBase.Remove_Watch(contentWin);
+            } else if (highlight == 3) {
+                theBase.Display_Database(contentWin);
             } else if (highlight == 4) {
                 werase(contentWin);
                 box(contentWin, 0, 0);
