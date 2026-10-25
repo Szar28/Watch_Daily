@@ -57,7 +57,6 @@ void Database::Add_Watch(WINDOW* window) {
     sqlite3_close(db);
 }
 
-
 void Database::Remove_Watch(WINDOW* window) {
 
     int id = 0;
@@ -89,7 +88,7 @@ void Database::Remove_Watch(WINDOW* window) {
     } else {
         sqlite3_free(errMessage);
     }
-
+    watchName[CHARACTER_LIMIT-1] = {0};
     mvwprintw(window, MAX_DISPLAY_ROWS + 2, 2, "Enter ID of watch to remove: ");
     wrefresh(window);
     mvwgetstr(window, MAX_DISPLAY_ROWS + 2, 31, watchName);
@@ -102,10 +101,22 @@ void Database::Remove_Watch(WINDOW* window) {
     }
 
     //Bind the id to the statement
-    id = std::stoi(watchName);
+    try {
+        id = std::stoi(watchName);
+    } catch (const std::invalid_argument& e) {
+        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "ID must be numeric.");
+        wrefresh(window);
+        sqlite3_close(db);
+        return;
+    } catch (const std::out_of_range& e) {
+        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "ID out of range.");
+        wrefresh(window);
+        sqlite3_close(db);
+        return;
+    }
+
     sqlite3_bind_int(stmt, 1, id);
     rc = sqlite3_step(stmt);
-
     if (rc != SQLITE_DONE) {
         mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "There was an error");
     } else {
@@ -116,12 +127,10 @@ void Database::Remove_Watch(WINDOW* window) {
 }
 
 void Database::Display_Database(WINDOW* window) {
-    int id = 0;
     sqlite3* db = nullptr;
     char* errMessage = nullptr;
     int rc = sqlite3_open("watch.db", &db);
 
-    echo();
     werase(window);
     box(window, 0, 0);
 
@@ -131,9 +140,7 @@ void Database::Display_Database(WINDOW* window) {
 
     sqlite3_stmt *stmt = nullptr;
     // Displays the rows for the from the database
-
     rc = sqlite3_prepare_v2(db, "SELECT id, name from watches ORDER BY id", -1, &stmt, NULL);
-
     if (rc == SQLITE_OK) {
         int row = 5;
         while(row <= MAX_DISPLAY_ROWS && sqlite3_step(stmt) == SQLITE_ROW) {
@@ -145,6 +152,55 @@ void Database::Display_Database(WINDOW* window) {
         }
         sqlite3_finalize(stmt);
     } else {
-        mvwprintw(window, MAX_DISPLAY_ROWS + 4, 4, "Error: %s", sqlite3_errmsg(db));
+        sqlite3_free(errMessage);
     }
+    sqlite3_close(db);
+}
+
+void Database::Create_List(WINDOW* window) {
+    sqlite3* db = nullptr;
+    char* errMessage = nullptr;
+    int rc = sqlite3_open("watch.db", &db); 
+
+    werase(window);
+    box(window, 0, 0);
+    
+    std::ofstream outfile("list.txt");
+    mvwprintw(window, 2, 2, "Creating list...");
+    sqlite3_stmt *stmt = nullptr;
+
+    //picks a watch at random
+    /* TODO : Change the loop based on how long they will need the list.
+    */
+    for (int i = 0; i < 3; i++) {
+        rc = sqlite3_prepare_v2(db, "SELECT id, name FROM watches ORDER BY RANDOM() LIMIT 1", -1, &stmt, NULL);
+        if (rc == SQLITE_OK) {
+            sqlite3_step(stmt);
+            const char *name = (const char *)sqlite3_column_text(stmt, 1);
+            outfile << name << std::endl;
+        } else {
+            sqlite3_free(errMessage);
+        }
+    }
+    
+    mvwprintw(window, 3, 2, "List was created");
+    wrefresh(window);
+    outfile.close();
+}
+
+void Database::View_List(WINDOW* window) {
+    int row = 0;
+    std::string name;
+    werase(window);
+    box(window, 0, 0);
+
+    std::ifstream outfile("list.txt");
+    mvwprintw(window, 2, 2, "Current List");
+    mvwprintw(window, 3, 2, "------------");
+    while (std::getline(outfile, name) && row < 3) {
+        mvwprintw(window, row+4, 4, "%d: %s", row, name.c_str());
+        row++;
+    }
+
+    wrefresh(window);
 }

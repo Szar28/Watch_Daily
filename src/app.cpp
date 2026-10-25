@@ -14,6 +14,7 @@ void Application::Main_Menu() {
     cbreak();
     getmaxyx(stdscr, ymax, xmax);
     box(stdscr, 0, 0);
+    mvwprintw(stdscr, 0, 1, "Watch Daily V0.1.0");
 
     WINDOW* menuWin = newwin(num_choices+4, xmax-2, ymax-(num_choices+4), 1);
     WINDOW* contentWin = newwin(ymax-(num_choices+4), xmax-2, 1, 1);
@@ -50,26 +51,24 @@ void Application::Main_Menu() {
                 break;
         }
         
-        /* TODO:
-            Make it so that it will point to other parts of the program.
-            Working on deleting a watch from the database.
+        /* TODO: Make it so that it will point to other parts of the program.
+                 Working on deleting a watch from the database.
         */
         if (choice == CONTROL_CONSTANTS::ENTER_KEY) {
             if (highlight == 0) {
-                werase(contentWin);
-                box(contentWin, 0, 0);
-                mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());
-                wrefresh(contentWin);
+                theBase.View_List(contentWin);
             } else if (highlight == 1) {
-                theBase.Add_Watch(contentWin);
+                theBase.Create_List(contentWin);
             } else if (highlight == 2) {
-                theBase.Remove_Watch(contentWin);
+                theBase.Add_Watch(contentWin);
             } else if (highlight == 3) {
-                theBase.Display_Database(contentWin);
+                theBase.Remove_Watch(contentWin);
             } else if (highlight == 4) {
+                theBase.Display_Database(contentWin);
+            } else if (highlight == 5) {
                 werase(contentWin);
                 box(contentWin, 0, 0);
-                mvwprintw(contentWin, 2, 3, "You chose: %s", choices[highlight].c_str());
+                mvwprintw(contentWin, 2, 3, "Bye Bye");
                 wrefresh(contentWin);
                 break;
             }

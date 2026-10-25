@@ -5,6 +5,8 @@
 #include <ncurses.h>
 #include <sqlite3.h>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 class Database {
 private: 
@@ -17,6 +19,8 @@ public:
     void Add_Watch(WINDOW* window);
     void Remove_Watch(WINDOW* window);
     void Display_Database(WINDOW* window);
+    void Create_List(WINDOW* window);
+    void View_List(WINDOW* window);
 };
 
 #endif

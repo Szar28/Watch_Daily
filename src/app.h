@@ -8,7 +8,8 @@
 
 class Application {
 private:
-    std::vector<std::string> choices = {      
+    std::vector<std::string> choices = {
+        "View Watch List",      
         "Create Watch List",
         "Add a watch",
         "Remove a watch",
