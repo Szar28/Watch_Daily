@@ -1,5 +1,6 @@
 #include "app.h"
 #include "database.h"
+#include "settings.h"
 
 Application::Application() {};
 
@@ -8,6 +9,8 @@ Application::~Application() {};
 void Application::Main_Menu() {
 
     Database theBase;
+    Settings theSettings;
+    theSettings.Read_In_Settings();
 
     initscr();
     noecho();
@@ -51,14 +54,11 @@ void Application::Main_Menu() {
                 break;
         }
         
-        /* TODO: Make it so that it will point to other parts of the program.
-                 Working on deleting a watch from the database.
-        */
         if (choice == CONTROL_CONSTANTS::ENTER_KEY) {
             if (highlight == 0) {
-                theBase.View_List(contentWin);
+                theBase.View_List(contentWin, &theSettings);
             } else if (highlight == 1) {
-                theBase.Create_List(contentWin);
+                theBase.Create_List(contentWin, &theSettings);
             } else if (highlight == 2) {
                 theBase.Add_Watch(contentWin);
             } else if (highlight == 3) {
@@ -66,6 +66,9 @@ void Application::Main_Menu() {
             } else if (highlight == 4) {
                 theBase.Display_Database(contentWin);
             } else if (highlight == 5) {
+                theSettings.Display_Setting(menuWin, contentWin);
+            } else if (highlight == 6) {
+                theSettings.Write_To_Settings_File();
                 werase(contentWin);
                 box(contentWin, 0, 0);
                 mvwprintw(contentWin, 2, 3, "Bye Bye");

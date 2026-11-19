@@ -68,30 +68,13 @@ void Database::Remove_Watch(WINDOW* window) {
     werase(window);
     box(window, 0, 0);
 
-    mvwprintw(window, 2, 2, " Database entries ");
-    mvwprintw(window, 3, 2, "  ID \t \t NAME ");
-    mvwprintw(window, 4, 2, " ----\t \t------");
-
     sqlite3_stmt *stmt = nullptr;
-    // Displays the rows for the from the database
-    rc = sqlite3_prepare_v2(db, "SELECT id, name from watches ORDER BY id", -1, &stmt, NULL);
-    if (rc == SQLITE_OK) {
-        int row = 5;
-        while(row <= MAX_DISPLAY_ROWS && sqlite3_step(stmt) == SQLITE_ROW) {
-            int id = sqlite3_column_int(stmt, 0);
-            const char *name = (const char *)sqlite3_column_text(stmt, 1);
-            mvwprintw(window, row, 4, "%-6d\t%s", id, name ? name : NULL);
-            wrefresh(window);
-            row++;
-        }
-        sqlite3_finalize(stmt);
-    } else {
-        sqlite3_free(errMessage);
-    }
+    Display_Database(window);
+
     watchName[CHARACTER_LIMIT-1] = {0};
-    mvwprintw(window, MAX_DISPLAY_ROWS + 2, 2, "Enter ID of watch to remove: ");
+    mvwprintw(window, 2, 2, "Enter ID of watch to remove: ");
     wrefresh(window);
-    mvwgetstr(window, MAX_DISPLAY_ROWS + 2, 31, watchName);
+    mvwgetstr(window, 2, 31, watchName);
     noecho();
 
     const char* sqlDelete = "DELETE FROM watches WHERE id = (?)";
@@ -104,12 +87,12 @@ void Database::Remove_Watch(WINDOW* window) {
     try {
         id = std::stoi(watchName);
     } catch (const std::invalid_argument& e) {
-        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "ID must be numeric.");
+        mvwprintw(window, 3, 2, "ID must be numeric.");
         wrefresh(window);
         sqlite3_close(db);
         return;
     } catch (const std::out_of_range& e) {
-        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "ID out of range.");
+        mvwprintw(window, 3, 2, "ID out of range.");
         wrefresh(window);
         sqlite3_close(db);
         return;
@@ -118,9 +101,9 @@ void Database::Remove_Watch(WINDOW* window) {
     sqlite3_bind_int(stmt, 1, id);
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "There was an error");
+        mvwprintw(window, 3, 2, "There was an error");
     } else {
-        mvwprintw(window, MAX_DISPLAY_ROWS + 3, 2, "Watch deleted successfully!");
+        mvwprintw(window, 3, 2, "Watch deleted successfully!");
     }
     wrefresh(window);
     sqlite3_close(db);
@@ -157,7 +140,7 @@ void Database::Display_Database(WINDOW* window) {
     sqlite3_close(db);
 }
 
-void Database::Create_List(WINDOW* window) {
+void Database::Create_List(WINDOW* window, Settings* settings) {
     sqlite3* db = nullptr;
     char* errMessage = nullptr;
     int rc = sqlite3_open("watch.db", &db); 
@@ -170,9 +153,7 @@ void Database::Create_List(WINDOW* window) {
     sqlite3_stmt *stmt = nullptr;
 
     //picks a watch at random
-    /* TODO : Change the loop based on how long they will need the list.
-    */
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < settings->Get_Count(); i++) {
         rc = sqlite3_prepare_v2(db, "SELECT id, name FROM watches ORDER BY RANDOM() LIMIT 1", -1, &stmt, NULL);
         if (rc == SQLITE_OK) {
             sqlite3_step(stmt);
@@ -188,7 +169,7 @@ void Database::Create_List(WINDOW* window) {
     outfile.close();
 }
 
-void Database::View_List(WINDOW* window) {
+void Database::View_List(WINDOW* window, Settings* settings) {
     int row = 0;
     std::string name;
     werase(window);
@@ -197,8 +178,8 @@ void Database::View_List(WINDOW* window) {
     std::ifstream outfile("list.txt");
     mvwprintw(window, 2, 2, "Current List");
     mvwprintw(window, 3, 2, "------------");
-    while (std::getline(outfile, name) && row < 3) {
-        mvwprintw(window, row+4, 4, "%d: %s", row, name.c_str());
+    while (std::getline(outfile, name) && row < settings->Get_Count()) {
+        mvwprintw(window, row+4, 4, "Day %d: %s", row+1, name.c_str());
         row++;
     }
 

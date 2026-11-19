@@ -13,6 +13,7 @@ add_executable(Watch_Daily
     src/main.cpp
     src/app.cpp
     src/database.cpp
+    src/settings.cpp
 )
 
 target_include_directories(Watch_Daily PRIVATE

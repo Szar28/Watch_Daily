@@ -13,7 +13,8 @@ private:
         "Create Watch List",
         "Add a watch",
         "Remove a watch",
-        "Watch Stats/View Database",
+        "View Database",
+        "Settings",
         "Exit"
     };
     int num_choices = choices.size();

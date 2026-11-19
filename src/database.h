@@ -7,20 +7,19 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "settings.h"
 
 class Database {
 private: 
     char watchName[CHARACTER_LIMIT]= "";
-    int ymax = 0;
-    int xmax = 0;
 public:
     Database();
     ~Database();
     void Add_Watch(WINDOW* window);
     void Remove_Watch(WINDOW* window);
     void Display_Database(WINDOW* window);
-    void Create_List(WINDOW* window);
-    void View_List(WINDOW* window);
+    void Create_List(WINDOW* window, Settings* settings);
+    void View_List(WINDOW* window, Settings* settings);
 };
 
 #endif
