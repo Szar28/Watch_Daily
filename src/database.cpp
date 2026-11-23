@@ -178,9 +178,18 @@ void Database::View_List(WINDOW* window, Settings* settings) {
     std::ifstream outfile("list.txt");
     mvwprintw(window, 2, 2, "Current List");
     mvwprintw(window, 3, 2, "------------");
-    while (std::getline(outfile, name) && row < settings->Get_Count()) {
-        mvwprintw(window, row+4, 4, "Day %d: %s", row+1, name.c_str());
-        row++;
+
+    if (settings->Get_Current_Mode() == WEEK) {
+        for (std::string day: days) {
+            getline(outfile, name);
+            mvwprintw(window, row+4, 4, "%s: %s", day.c_str(), name.c_str());
+            row++;
+        }
+    } else if (settings->Get_Current_Mode() == COUNT) {
+        while (std::getline(outfile, name) && row < settings->Get_Count()) {
+            mvwprintw(window, row+4, 4, "Day %d: %s", row+1, name.c_str());
+            row++;
+        }
     }
 
     wrefresh(window);

@@ -5,12 +5,20 @@
 #include <ncurses.h>
 #include <sqlite3.h>
 #include <iostream>
-#include <fstream>
-#include <string>
+#include <vector>
 #include "settings.h"
 
 class Database {
 private: 
+    std::vector<std::string> days = {
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    };
     char watchName[CHARACTER_LIMIT]= "";
 public:
     Database();
